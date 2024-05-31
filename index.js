@@ -171,3 +171,36 @@ const addEmployee = async () => {
         console.error(err);
     }
 };
+
+const updateEmployeeRole = async () => {
+    try {
+        const [employees] = await db.query('SELECT * FROM employee');
+        const [roles] = await db.query('SELECT * FROM role');
+        const answers = await inquirer.createPromptModule([
+            {
+                type: 'list',
+                name: 'employee_id',
+                message: 'Which employee would you like to update?',
+                choices: employees.map(employee => ({
+                    name: `${employee.first_name} ${employee.last_name}`,
+                    value: employee.id
+                }))
+            },
+            {
+                type: 'list',
+                name: 'role_id',
+                message: "What's the new role for this employee?",
+                choices: roles.map(role => ({
+                    name: role.title,
+                    value: role.id
+            }))
+        }
+        ]);
+        await db.query('UPDATE employee SET role_id = ? WHERE id = ?', [answers.role_id, answers.employee_id]);
+        console.log('Employee role updated successfully!');
+    } catch (err) {
+        console.error(err);
+    }
+};
+
+mainMenu();
