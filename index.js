@@ -18,10 +18,11 @@ const mainMenu = async () => {
             name: 'action',
             message: 'What would you like to do:',
             choices: [
-                'View deparments',
+                'View departments',
                 'View employees',
-                'View employee roles',
+                'View roles',
                 'Add a department',
+                'Add a role',
                 'Add an employee',
                 'Update an employee role',
                 "Exit"
@@ -42,7 +43,7 @@ const mainMenu = async () => {
         case 'Add a department':
             await addDepartment();
             break;
-        case 'Add employee role':
+        case 'Add a role':
             await addRole();
             break;
         case 'Add an employee':
@@ -73,7 +74,7 @@ const viewAllDepartments = async () => {
 const viewRoles = async () => {
     try {
         const [results] = await db.query(`
-        SELECT role.id, role.title, deparment.name AS deparment, role.salary FROM role LEFT JOIN department ON role.department_id = department.id
+        SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department ON role.department_id = department.id
         `);
         console.table(results);
     } catch (err) {
@@ -84,11 +85,11 @@ const viewRoles = async () => {
 const viewAllEmployees = async () => {
     try {
         const [results] = await db.query(`
-        SELECT employee.id, emloyee.first_name, employee.last_name, role.title, department.name AS department, role.salary,
+        SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary,
         CONCAT(manager.first_name, ' ', manager.last_name) AS manager 
         FROM employee
-        LEFT JOIN role ON employee..role_id = role.id
-        LEFT JOIN deparment ON role.deparment_id = department.id
+        LEFT JOIN role ON employee.role_id = role.id
+        LEFT JOIN department ON role.department_id = department.id
         LEFT JOIN employee manager on employee.manager_id = manager.id
         `);
         console.table(results);
@@ -108,7 +109,7 @@ const addDepartment = async () => {
             }
         ]);
         await db.query('INSERT INTO department (name) Values (?)', [name]);
-        console.log('Deparment added!');
+        console.log('department added!');
     } catch (err) {
         console.error(err);
     }
@@ -133,13 +134,14 @@ const addRole = async () => {
                 type:'list',
                 name: 'department_id',
                 message: 'Which department does this role belong to?',
-                choices: department.map(deparment => ({
-                    name: deparment.name,
-                    value: deparment.id
+                choices: department.map(department => ({
+                    name: department.name,
+                    value: department.id
                 }))
             }
         ]);
-        await db.query('INSERT INTO role (title, salary, deparment_id) VALUES (?, ?, ?'),
+        const salary = answers.salary.replace(/,/g, '');
+        await db.query('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)', [answers.title, answers.salary, answers.department_id]);
         console.log('Role has been added');
     } catch (err) {
         console.error(err);
