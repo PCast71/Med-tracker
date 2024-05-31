@@ -1,5 +1,4 @@
 const mysql = require('mysql2/promise');
-const inquirer = require('inquirer');
 const cTable = require('console.table');
 
 // Connection to DB
@@ -12,7 +11,8 @@ const db = mysql.createPool(
     });
 
 const mainMenu = async () => {
-    const { action } = await inquirer.createPromptModule([
+    const { default: inquirer } = await import('inquirer');
+    const { action } = await inquirer.prompt([
         {
             type: 'list',
             name: 'action',
@@ -81,9 +81,26 @@ const viewRoles = async () => {
     }
 };
 
+const viewAllEmployees = async () => {
+    try {
+        const [results] = await db.query(`
+        SELECT employee.id, emloyee.first_name, employee.last_name, role.title, department.name AS department, role.salary,
+        CONCAT(manager.first_name, ' ', manager.last_name) AS manager 
+        FROM employee
+        LEFT JOIN role ON employee..role_id = role.id
+        LEFT JOIN deparment ON role.deparment_id = department.id
+        LEFT JOIN employee manager on employee.manager_id = manager.id
+        `);
+        console.table(results);
+    } catch (err) {
+        console.error(err);
+    }
+};
+// Add Functions
 const addDepartment = async () => {
     try {
-        const {name} = await inquirer.createPromptModule([
+        const { default: inquirer } = await import('inquirer');
+        const {name} = await inquirer.prompt([
             {
                 type: 'input',
                 name: 'name',
@@ -99,8 +116,9 @@ const addDepartment = async () => {
 
 const addRole = async () => {
     try {
+        const { default: inquirer } = await import('inquirer');
         const [department] = await db.query('SELECT * FROM department');
-        const answers = await inquirer.createPromptModule([
+        const answers = await inquirer.prompt([
             {
                 type: 'input',
                 name: 'title',
@@ -130,9 +148,10 @@ const addRole = async () => {
 
 const addEmployee = async () => {
     try {
+        const { default: inquirer } = await import('inquirer');
         const [roles] = await db.query('SELECT * FROM role');
         const [employees] = await db.query('SELECT * FROM employee');
-        const answer = await inquirer.createPromptModule([
+        const answers = await inquirer.prompt([
             {
                 type: 'input',
                 name: 'first_name',
@@ -174,9 +193,10 @@ const addEmployee = async () => {
 
 const updateEmployeeRole = async () => {
     try {
+        const { default: inquirer } = await import('inquirer');
         const [employees] = await db.query('SELECT * FROM employee');
         const [roles] = await db.query('SELECT * FROM role');
-        const answers = await inquirer.createPromptModule([
+        const answers = await inquirer.prompt([
             {
                 type: 'list',
                 name: 'employee_id',
