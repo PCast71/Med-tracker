@@ -5,7 +5,7 @@ const cTable = require('console.table');
 const db = mysql.createPool(
     {
         host: 'localhost',
-        user: 'root',
+        user: 'med-tracker',
         password: 'Hospital123!!',
         database: 'employee_tracker'
     });
