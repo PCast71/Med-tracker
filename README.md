@@ -17,7 +17,7 @@ Med-Tracker is a command-line application that allows users to manage and track 
 
 1. **Clone the repository**:
     ```sh
-    git clone https://github.com/your-username/employee-tracker.git
+    git clone git@github.com:PCast71/Med-tracker.git
     cd employee-tracker
     ```
 
