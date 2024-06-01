@@ -2,7 +2,7 @@
 
 ## Description
 
-Employee Tracker is a command-line application that allows users to manage and track employees within a company. This application is particularly geared towards managing employee roles, departments, and managers in a hospital setting. It uses Node.js, Inquirer, and MySQL to provide an interactive interface for users to perform various CRUD operations on the database.
+Med-Tracker is a command-line application that allows users to manage and track employees within a company. This application is particularly geared towards managing employee roles, departments, and managers in a hospital setting. It uses Node.js, Inquirer, and MySQL to provide an interactive interface for users to perform various CRUD operations on the database.
 
 ## Table of Contents
 
