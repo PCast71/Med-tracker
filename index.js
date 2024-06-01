@@ -24,6 +24,7 @@ const mainMenu = async () => {
                 'Add a department',
                 'Add a role',
                 'Add an employee',
+                'Add a manager',
                 'Update an employee role',
                 "Exit"
             ]
@@ -48,6 +49,9 @@ const mainMenu = async () => {
             break;
         case 'Add an employee':
             await addEmployee();
+            break;
+        case 'Add a manager':
+            await addManager();
             break;
         case "Update an employee role":
             await updateEmployeeRole();
@@ -188,6 +192,31 @@ const addEmployee = async () => {
         ]);
         await db.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [answers.first_name, answers.last_name, answers.role_id, answers.manager_id]);
         console.log('Employee added!');
+    } catch (err) {
+        console.error(err);
+    }
+};
+
+const addManager = async () => {
+    try {
+        const { default: inquirer }
+ = await import('inquirer');
+const [roles] = await db.query('SELECT * FROM role WHERE title LIKE "%manager%"');
+const answers = await inquirer.prompt([
+    {
+        type: 'input',
+        name: 'first_name',
+        message: 'What is the first name of the new manager?'
+    },
+    {
+        type: 'input',
+        name: 'last_name',
+        message: "What's the last name of the new manager?"
+    },
+    
+]);
+    await db.query('INSERT INTO employee (first_name, last_name) VALUES (?, ?)', [answers.first_name, answers.last_name,]);
+    console.log('Manager added');
     } catch (err) {
         console.error(err);
     }
